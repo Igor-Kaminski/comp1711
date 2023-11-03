@@ -41,29 +41,44 @@ void tokeniseRecord(const char *input, const char *delimiter,
 
 }
 
-// Complete the main function
 int main() {
+
+    // Open the actual file in read mode
+
     char filename [] = "FitnessData_2023.csv";
     FILE *file = fopen(filename, "r");
-    if (file==NULL){
+    if (file == NULL) {
         perror("Error has occurred, could not open the file.\n");
         return 1;
     }
 
-int numRecords=0;
-int buffer_size=100;
-char line_buffer[buffer_size];
+    int numRecords = 0;
+    int buffer_size = 100;
+    char line_buffer[buffer_size];
 
-while (fgets(line_buffer, buffer_size, file) !=NULL) {
-    numRecords++;
-}
+    // Count the number of records in the file
+    while (fgets(line_buffer, buffer_size, file) != NULL) {
+        numRecords++;
+    }
 
-printf("Number of records in file: %d\n", numRecords);
+    printf("Number of records in file: %d\n", numRecords);
 
+    // Reset the file pointer to the beginning of the file because first while loop makes it so that file pointer reaches the end of the file and then the while loop below this will not print anything
+    fseek(file, 0, SEEK_SET);
 
+    char date[11];
+    char time[6];
+    char steps_str[10];
+    int line_counter = 0;
 
+    // First 3 lines in correct format printed
+    while (fgets(line_buffer, buffer_size, file) != NULL && line_counter < 3) {
+        tokeniseRecord(line_buffer, ",", date, time, steps_str);
+        printf("%s/%s/%s", date, time, steps_str);
+        line_counter++;
+    }
 
-    
-fclose(file);
-return 0;
+    fclose(file);
+    return 0;
+
 }
